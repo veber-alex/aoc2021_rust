@@ -115,6 +115,7 @@ fn main() -> Result<()> {
     let (score_first_winner, score_last_winner) = play_game(&mut boards, &numbers);
     assert_eq!(score_first_winner, 29440);
     println!("First winner score: {}", score_first_winner);
+    assert_eq!(score_last_winner, 13884);
     println!("Last winner score: {}", score_last_winner);
 
     Ok(())
