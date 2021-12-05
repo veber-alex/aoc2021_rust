@@ -1,21 +1,18 @@
-use std::fs;
-
-use anyhow::{bail, Context, Result};
+const NUM_OF_BITS: usize = 12;
 
 fn parse_input(input: &str) -> Vec<&str> {
-    input.lines().map(|l| l.trim()).collect::<Vec<_>>()
+    input.lines().collect::<Vec<_>>()
 }
 
-fn get_power_consumption(report: &[&str]) -> Result<usize> {
-    let num_of_bits = report.first().context("empty report")?.bytes().count();
-    let mut bit_counts = vec![0; num_of_bits];
+fn day3a(report: &[&str]) -> usize {
+    let mut bit_counts = [0; NUM_OF_BITS];
 
     for line in report {
-        for (c, bit) in line.bytes().zip(bit_counts.iter_mut()) {
+        for (bit, c) in bit_counts.iter_mut().zip(line.bytes()) {
             match c {
                 b'1' => *bit += 1,
                 b'0' => {}
-                _ => bail!("unknown bit symbol"),
+                _ => unreachable!(),
             }
         }
     }
@@ -23,35 +20,35 @@ fn get_power_consumption(report: &[&str]) -> Result<usize> {
     let mut gamma = 0;
     for (power, &count) in bit_counts.iter().rev().enumerate() {
         if count * 2 > report.len() {
-            gamma += 2usize.pow(power as u32)
+            gamma += 1 << power
         }
     }
-    let epsilon = gamma ^ (2usize.pow(num_of_bits as u32) - 1);
+    let epsilon = gamma ^ ((1 << NUM_OF_BITS) - 1);
 
-    Ok(gamma * epsilon)
+    gamma * epsilon
 }
 
-fn bit_count(report: &[&str], bit: usize) -> Result<usize> {
+fn bit_count(report: &[&str], bit: usize) -> usize {
     report
         .iter()
         .map(|l| match l.as_bytes()[bit] {
-            b'1' => Ok(1),
-            b'0' => Ok(0),
-            _ => bail!("unknown bit symbol"),
+            b'1' => 1,
+            b'0' => 0,
+            _ => unreachable!(),
         })
         .sum()
 }
 
-fn filter_rating<F>(mut report: Vec<&str>, mut f: F) -> Result<&str>
+fn filter_rating<F>(mut report: Vec<&str>, mut f: F) -> &str
 where
-    F: FnMut(&[&str], usize) -> Result<bool>,
+    F: FnMut(&[&str], usize) -> bool,
 {
     let mut i = 0;
     loop {
         match report.as_slice() {
-            [s] => return Ok(s),
+            [s] => return s,
             _ => {
-                let common = if f(&report, i)? { b'1' } else { b'0' };
+                let common = if f(&report, i) { b'1' } else { b'0' };
                 report.retain(|s| s.as_bytes()[i] == common);
             }
         }
@@ -59,29 +56,27 @@ where
     }
 }
 
-fn get_life_support_rating(report: &[&str]) -> Result<usize> {
+fn day3b(report: &[&str]) -> usize {
     let oxygen = filter_rating(report.to_vec(), |report, i| {
-        Ok(bit_count(report, i)? * 2 >= report.len())
-    })?;
+        bit_count(report, i) * 2 >= report.len()
+    });
 
     let co2 = filter_rating(report.to_vec(), |report, i| {
-        Ok(bit_count(report, i)? * 2 < report.len())
-    })?;
+        bit_count(report, i) * 2 < report.len()
+    });
 
-    Ok(usize::from_str_radix(oxygen, 2)? * usize::from_str_radix(co2, 2)?)
+    usize::from_str_radix(oxygen, 2).unwrap() * usize::from_str_radix(co2, 2).unwrap()
 }
 
-fn main() -> Result<()> {
-    let input = fs::read_to_string("inputs/day3.txt")?;
-    let report = parse_input(&input);
+fn main() {
+    let input = include_str!("../../inputs/day3.txt");
+    let report = parse_input(input);
 
-    let power_consumption = get_power_consumption(&report)?;
-    assert_eq!(power_consumption, 1092896);
-    println!("Power consumption: {}", power_consumption);
+    let day3a = day3a(&report);
+    debug_assert_eq!(day3a, 1092896);
+    println!("day3a: {}", day3a);
 
-    let life_support_rating = get_life_support_rating(&report)?;
-    assert_eq!(life_support_rating, 4672151);
-    println!("Life support rating: {}", life_support_rating);
-
-    Ok(())
+    let day3b = day3b(&report);
+    debug_assert_eq!(day3b, 4672151);
+    println!("day3b: {}", day3b);
 }

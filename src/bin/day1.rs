@@ -1,30 +1,24 @@
-use std::fs;
-
-use anyhow::Result;
-
-fn parse_input(input: &str) -> Result<Vec<usize>> {
-    input.lines().map(|l| Ok(l.trim().parse()?)).collect()
+fn parse_input(input: &str) -> Vec<usize> {
+    input.lines().map(|l| l.parse().unwrap()).collect()
 }
 
-fn num_of_increments(depths: &[usize]) -> usize {
+fn day1a(depths: &[usize]) -> usize {
     depths.windows(2).filter(|w| w[1] > w[0]).count()
 }
 
-fn num_of_increments_3(depths: &[usize]) -> usize {
+fn day1b(depths: &[usize]) -> usize {
     depths.windows(4).filter(|w| w[3] > w[0]).count()
 }
 
-fn main() -> Result<()> {
-    let input = fs::read_to_string("inputs/day1.txt")?;
-    let depths = parse_input(&input)?;
+fn main() {
+    let input = include_str!("../../inputs/day1.txt");
+    let depths = parse_input(input);
 
-    let increments = num_of_increments(&depths);
-    assert_eq!(increments, 1759);
-    println!("Single increments: {}", increments);
+    let day1a = day1a(&depths);
+    debug_assert_eq!(day1a, 1759);
+    println!("day1a: {}", day1a);
 
-    let increments_3 = num_of_increments_3(&depths);
-    assert_eq!(increments_3, 1805);
-    println!("3 increments: {}", increments_3);
-
-    Ok(())
+    let day1b = day1b(&depths);
+    debug_assert_eq!(day1b, 1805);
+    println!("day1b: {}", day1b);
 }

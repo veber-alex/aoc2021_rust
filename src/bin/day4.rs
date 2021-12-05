@@ -1,7 +1,3 @@
-use std::fs;
-
-use anyhow::{Context, Result};
-
 #[derive(Debug, Default)]
 struct Number {
     number: u32,
@@ -61,30 +57,22 @@ impl Board {
     }
 }
 
-fn parse_input(input: &str) -> Result<(Vec<Board>, Vec<u32>)> {
-    let mut iter = input.lines().map(|l| l.trim());
-    let numbers = iter
-        .next()
-        .context("empty input")?
-        .split(',')
-        .map(|s| s.parse())
-        .collect::<Result<Vec<_>, _>>()?;
+fn parse_input(input: &str) -> (Vec<Board>, Vec<u32>) {
+    let (numbers, boards) = input.split_once("\n\n").unwrap();
 
-    let mut boards = vec![];
-    while iter.next().is_some() {
-        let mut board = Board::default();
-        for (s, n) in iter
-            .by_ref()
-            .take(5)
-            .flat_map(|s| s.split_ascii_whitespace())
-            .zip(&mut board.grid)
-        {
-            *n = Number::new(s.parse()?);
-        }
-        boards.push(board);
-    }
+    let numbers = numbers.split(',').map(|s| s.parse().unwrap()).collect();
+    let boards = boards
+        .split("\n\n")
+        .map(|b| {
+            let mut board = Board::default();
+            for (s, n) in b.split_ascii_whitespace().zip(&mut board.grid) {
+                *n = Number::new(s.parse().unwrap());
+            }
+            board
+        })
+        .collect();
 
-    Ok((boards, numbers))
+    (boards, numbers)
 }
 
 fn play_game(boards: &mut [Board], numbers: &[u32]) -> (u32, u32) {
@@ -107,15 +95,14 @@ fn play_game(boards: &mut [Board], numbers: &[u32]) -> (u32, u32) {
     (score_first_winner, score_last_winner)
 }
 
-fn main() -> Result<()> {
-    let input = fs::read_to_string("inputs/day4.txt")?;
-    let (mut boards, numbers) = parse_input(&input)?;
+fn main() {
+    let input = include_str!("../../inputs/day4.txt");
+    let (mut boards, numbers) = parse_input(input);
+    let (day4a, day4b) = play_game(&mut boards, &numbers);
 
-    let (score_first_winner, score_last_winner) = play_game(&mut boards, &numbers);
-    assert_eq!(score_first_winner, 29440);
-    println!("First winner score: {}", score_first_winner);
-    assert_eq!(score_last_winner, 13884);
-    println!("Last winner score: {}", score_last_winner);
+    debug_assert_eq!(day4a, 29440);
+    println!("First winner score: {}", day4a);
 
-    Ok(())
+    debug_assert_eq!(day4b, 13884);
+    println!("Last winner score: {}", day4b);
 }

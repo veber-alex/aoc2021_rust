@@ -1,36 +1,28 @@
-use std::fs;
-
-use anyhow::{bail, Context, Result};
-
 enum Command {
     Forward,
     Up,
     Down,
 }
 
-fn parse_input(input: &str) -> Result<Vec<(Command, usize)>> {
+fn parse_input(input: &str) -> Vec<(Command, usize)> {
     input
         .lines()
         .map(|l| {
-            let (cmd, n) = l
-                .trim()
-                .split_once(' ')
-                .context("failed to split command")?;
-
-            let n = n.parse()?;
+            let (cmd, n) = l.split_once(' ').unwrap();
+            let n = n.parse().unwrap();
             let cmd = match cmd {
                 "forward" => Command::Forward,
                 "up" => Command::Up,
                 "down" => Command::Down,
-                _ => bail!("unrecognized command"),
+                _ => unreachable!(),
             };
 
-            Ok((cmd, n))
+            (cmd, n)
         })
         .collect()
 }
 
-fn get_position_times_depth(data: &[(Command, usize)]) -> usize {
+fn day1a(data: &[(Command, usize)]) -> usize {
     let mut position = 0;
     let mut depth = 0;
 
@@ -45,7 +37,7 @@ fn get_position_times_depth(data: &[(Command, usize)]) -> usize {
     position * depth
 }
 
-fn get_position_times_depth_with_aim(data: &[(Command, usize)]) -> usize {
+fn day1b(data: &[(Command, usize)]) -> usize {
     let mut position = 0;
     let mut depth = 0;
     let mut aim = 0;
@@ -64,17 +56,15 @@ fn get_position_times_depth_with_aim(data: &[(Command, usize)]) -> usize {
     position * depth
 }
 
-fn main() -> Result<()> {
-    let input = fs::read_to_string("inputs/day2.txt")?;
-    let commands = parse_input(&input)?;
+fn main() {
+    let input = include_str!("../../inputs/day2.txt");
+    let commands = parse_input(input);
 
-    let score = get_position_times_depth(&commands);
-    assert_eq!(score, 1728414);
-    println!("Score: {}", score);
+    let day1a = day1a(&commands);
+    debug_assert_eq!(day1a, 1728414);
+    println!("day1a: {}", day1a);
 
-    let score = get_position_times_depth_with_aim(&commands);
-    assert_eq!(score, 1765720035);
-    println!("Score with aim: {}", score);
-
-    Ok(())
+    let day1b = day1b(&commands);
+    debug_assert_eq!(day1b, 1765720035);
+    println!("day1b: {}", day1b);
 }
