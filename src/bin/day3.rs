@@ -42,34 +42,33 @@ fn bit_count(report: &[&str], bit: usize) -> Result<usize> {
         .sum()
 }
 
-fn filter_rating<F>(report: &mut Vec<&str>, mut f: F) -> Result<()>
+fn filter_rating<F>(mut report: Vec<&str>, mut f: F) -> Result<&str>
 where
-    F: FnMut(&mut Vec<&str>, usize) -> Result<bool>,
+    F: FnMut(&Vec<&str>, usize) -> Result<bool>,
 {
-    for i in 0.. {
-        if report.len() > 1 {
-            let common = if f(report, i)? { b'1' } else { b'0' };
-            report.retain(|s| s.as_bytes()[i] == common);
-        } else {
-            break;
+    let mut i = 0;
+    loop {
+        match report.as_slice() {
+            [s] => return Ok(s),
+            _ => {
+                let common = if f(&report, i)? { b'1' } else { b'0' };
+                report.retain(|s| s.as_bytes()[i] == common);
+            }
         }
+        i += 1;
     }
-
-    Ok(())
 }
 
 fn get_life_support_rating(report: &[&str]) -> Result<usize> {
-    let mut oxygen = report.to_vec();
-    filter_rating(&mut oxygen, |report, i| {
+    let oxygen = filter_rating(report.to_vec(), |report, i| {
         Ok(bit_count(report, i)? * 2 >= report.len())
     })?;
 
-    let mut co2 = report.to_vec();
-    filter_rating(&mut co2, |report, i| {
+    let co2 = filter_rating(report.to_vec(), |report, i| {
         Ok(bit_count(report, i)? * 2 < report.len())
     })?;
 
-    Ok(usize::from_str_radix(oxygen[0], 2)? * usize::from_str_radix(co2[0], 2)?)
+    Ok(usize::from_str_radix(oxygen, 2)? * usize::from_str_radix(co2, 2)?)
 }
 
 fn main() -> Result<()> {
