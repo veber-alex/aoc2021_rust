@@ -44,7 +44,7 @@ fn bit_count(report: &[&str], bit: usize) -> Result<usize> {
 
 fn filter_rating<F>(mut report: Vec<&str>, mut f: F) -> Result<&str>
 where
-    F: FnMut(&Vec<&str>, usize) -> Result<bool>,
+    F: FnMut(&[&str], usize) -> Result<bool>,
 {
     let mut i = 0;
     loop {

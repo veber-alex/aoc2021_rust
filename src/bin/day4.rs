@@ -71,7 +71,6 @@ fn parse_input(input: &str) -> Result<(Vec<Board>, Vec<u32>)> {
         .collect::<Result<Vec<_>, _>>()?;
 
     let mut boards = vec![];
-
     while iter.next().is_some() {
         let mut board = Board::default();
         for (s, n) in iter
