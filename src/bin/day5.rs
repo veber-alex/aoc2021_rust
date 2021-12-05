@@ -1,64 +1,45 @@
 use std::collections::HashMap;
 
-fn parse_point(s: &str) -> (u32, u32) {
+fn parse_point(s: &str) -> (u16, u16) {
     let (a, b) = s.split_once(',').unwrap();
     (a.parse().unwrap(), b.parse().unwrap())
 }
 
 fn parse_and_run<F>(input: &str, mut f: F) -> usize
 where
-    F: FnMut(u32, u32, u32, u32, &mut HashMap<(u32, u32), bool>),
+    F: FnMut(u16, u16, u16, u16) -> bool,
 {
     let mut points = HashMap::new();
+    let mut add_point = |x, y| {
+        points.entry((x, y)).and_modify(|v| *v = true).or_default();
+    };
 
     for line in input.lines() {
         let (start, end) = line.split_once(" -> ").unwrap();
-        let (xs, ys) = parse_point(start);
-        let (xe, ye) = parse_point(end);
+        let (mut x1, mut y1) = parse_point(start);
+        let (x2, y2) = parse_point(end);
 
-        f(xs, ys, xe, ye, &mut points);
+        if f(x1, y1, x2, y2) {
+            continue;
+        }
+
+        add_point(x1, y1);
+        while (x1, y1) != (x2, y2) {
+            x1 = x1 + (x2 > x1) as u16 - (x1 > x2) as u16;
+            y1 = y1 + (y2 > y1) as u16 - (y1 > y2) as u16;
+            add_point(x1, y1);
+        }
     }
 
     points.values().filter(|v| **v).count()
 }
 
-fn day5a(xs: u32, ys: u32, xe: u32, ye: u32, points: &mut HashMap<(u32, u32), bool>) {
-    use std::cmp::Ordering::*;
-
-    let mut add_point = |x, y| {
-        points.entry((x, y)).and_modify(|v| *v = true).or_default();
-    };
-    match (xs.cmp(&xe), ys.cmp(&ye)) {
-        (Less, Equal) => (xs..=xe).for_each(|x| add_point(x, ys)),
-        (Greater, Equal) => (xe..=xs).for_each(|x| add_point(x, ys)),
-        (Equal, Less) => (ys..=ye).for_each(|y| add_point(xs, y)),
-        (Equal, Greater) => (ye..=ys).for_each(|y| add_point(xs, y)),
-        _ => {}
-    }
+fn day5a(x1: u16, y1: u16, x2: u16, y2: u16) -> bool {
+    x1 != x2 && y1 != y2
 }
 
-fn day5b(xs: u32, ys: u32, xe: u32, ye: u32, points: &mut HashMap<(u32, u32), bool>) {
-    use std::cmp::Ordering::*;
-
-    let mut add_point = |x, y| {
-        points.entry((x, y)).and_modify(|v| *v = true).or_default();
-    };
-    match (xs.cmp(&xe), ys.cmp(&ye)) {
-        (Less, Equal) => (xs..=xe).for_each(|x| add_point(x, ys)),
-        (Greater, Equal) => (xe..=xs).for_each(|x| add_point(x, ys)),
-        (Equal, Less) => (ys..=ye).for_each(|y| add_point(xs, y)),
-        (Equal, Greater) => (ye..=ys).for_each(|y| add_point(xs, y)),
-        (Less, Less) => (xs..=xe).zip(ys..=ye).for_each(|(x, y)| add_point(x, y)),
-        (Less, Greater) => (xs..=xe)
-            .zip((ye..=ys).rev())
-            .for_each(|(x, y)| add_point(x, y)),
-        (Greater, Less) => (xe..=xs)
-            .rev()
-            .zip(ys..=ye)
-            .for_each(|(x, y)| add_point(x, y)),
-        (Greater, Greater) => (xe..=xs).zip(ye..=ys).for_each(|(x, y)| add_point(x, y)),
-        (Equal, Equal) => unreachable!(),
-    };
+fn day5b(_: u16, _: u16, _: u16, _: u16) -> bool {
+    false
 }
 
 fn main() {
