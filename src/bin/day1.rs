@@ -11,16 +11,7 @@ fn num_of_increments(depths: &[usize]) -> usize {
 }
 
 fn num_of_increments_3(depths: &[usize]) -> usize {
-    let mut a = usize::MAX;
-    depths
-        .windows(3)
-        .map(|w| w[0] + w[1] + w[2])
-        .filter(|&b| {
-            let inc = b > a;
-            a = b;
-            inc
-        })
-        .count()
+    depths.windows(4).filter(|w| w[3] > w[0]).count()
 }
 
 fn main() -> Result<()> {
