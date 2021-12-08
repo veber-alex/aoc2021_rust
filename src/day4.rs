@@ -77,7 +77,7 @@ fn play_game(boards: &mut [Board], numbers: &[i32]) -> (i32, i32) {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day4.txt");
+    let input = include_str!("../inputs/day4.txt");
     let (mut boards, numbers) = parse_input(input);
     let (day4a, day4b) = play_game(&mut boards, &numbers);
 

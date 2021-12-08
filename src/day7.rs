@@ -31,8 +31,8 @@ fn day7b(data: &[u32]) -> u32 {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day7.txt");
-    let data = parse_input(&input);
+    let input = include_str!("../inputs/day7.txt");
+    let data = parse_input(input);
 
     let day7a = day7a(&data);
     debug_assert_eq!(day7a, 343441);

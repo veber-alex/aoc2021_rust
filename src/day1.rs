@@ -11,7 +11,7 @@ fn day1b(depths: &[usize]) -> usize {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day1.txt");
+    let input = include_str!("../inputs/day1.txt");
     let depths = parse_input(input);
 
     let day1a = day1a(&depths);

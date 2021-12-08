@@ -69,7 +69,7 @@ fn day3b(report: &[&str]) -> usize {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day3.txt");
+    let input = include_str!("../inputs/day3.txt");
     let report = parse_input(input);
 
     let day3a = day3a(&report);

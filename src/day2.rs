@@ -57,7 +57,7 @@ fn day1b(data: &[(Command, usize)]) -> usize {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day2.txt");
+    let input = include_str!("../inputs/day2.txt");
     let commands = parse_input(input);
 
     let day1a = day1a(&commands);

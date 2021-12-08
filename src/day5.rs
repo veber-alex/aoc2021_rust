@@ -43,7 +43,7 @@ fn day5b(_: u16, _: u16, _: u16, _: u16) -> bool {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day5.txt");
+    let input = include_str!("../inputs/day5.txt");
 
     let day5a = parse_and_run(input, day5a);
     debug_assert_eq!(day5a, 5608);

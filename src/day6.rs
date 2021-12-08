@@ -19,7 +19,7 @@ fn day6(arr: &mut [usize; 9], gen_range: Range<usize>) -> usize {
 }
 
 fn main() {
-    let input = include_str!("../../inputs/day6.txt");
+    let input = include_str!("../inputs/day6.txt");
     let mut arr = parse_input(input);
 
     let day6a = day6(&mut arr, 0..80);
