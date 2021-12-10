@@ -82,8 +82,8 @@ fn main() {
     let (day4a, day4b) = play_game(&mut boards, &numbers);
 
     assert_eq!(day4a, 29440);
-    println!("First winner score: {}", day4a);
+    println!("day4a: {}", day4a);
 
     assert_eq!(day4b, 13884);
-    println!("Last winner score: {}", day4b);
+    println!("day4b: {}", day4b);
 }

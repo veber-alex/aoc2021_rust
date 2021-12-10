@@ -72,7 +72,7 @@ fn main() {
 
     let day8a = day8a(input);
     assert_eq!(day8a, 301);
-    println!("day7a: {}", day8a);
+    println!("day8a: {}", day8a);
 
     let day8b = day8b(input);
     assert_eq!(day8b, 908067);

@@ -22,7 +22,7 @@ fn parse_input(input: &str) -> Vec<(Command, usize)> {
         .collect()
 }
 
-fn day1a(data: &[(Command, usize)]) -> usize {
+fn day2a(data: &[(Command, usize)]) -> usize {
     let mut position = 0;
     let mut depth = 0;
 
@@ -37,7 +37,7 @@ fn day1a(data: &[(Command, usize)]) -> usize {
     position * depth
 }
 
-fn day1b(data: &[(Command, usize)]) -> usize {
+fn day2b(data: &[(Command, usize)]) -> usize {
     let mut position = 0;
     let mut depth = 0;
     let mut aim = 0;
@@ -60,11 +60,11 @@ fn main() {
     let input = include_str!("../inputs/day2.txt");
     let commands = parse_input(input);
 
-    let day1a = day1a(&commands);
-    assert_eq!(day1a, 1728414);
-    println!("day1a: {}", day1a);
+    let day2a = day2a(&commands);
+    assert_eq!(day2a, 1728414);
+    println!("day2a: {}", day2a);
 
-    let day1b = day1b(&commands);
-    assert_eq!(day1b, 1765720035);
-    println!("day1b: {}", day1b);
+    let day2b = day2b(&commands);
+    assert_eq!(day2b, 1765720035);
+    println!("day2b: {}", day2b);
 }
