@@ -71,10 +71,10 @@ fn main() {
     let input = include_str!("../inputs/day8.txt");
 
     let day8a = day8a(input);
-    debug_assert_eq!(day8a, 301);
+    assert_eq!(day8a, 301);
     println!("day7a: {}", day8a);
 
     let day8b = day8b(input);
-    debug_assert_eq!(day8b, 908067);
+    assert_eq!(day8b, 908067);
     println!("day8b: {}", day8b);
 }

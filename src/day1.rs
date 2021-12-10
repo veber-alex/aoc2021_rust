@@ -15,10 +15,10 @@ fn main() {
     let depths = parse_input(input);
 
     let day1a = day1a(&depths);
-    debug_assert_eq!(day1a, 1759);
+    assert_eq!(day1a, 1759);
     println!("day1a: {}", day1a);
 
     let day1b = day1b(&depths);
-    debug_assert_eq!(day1b, 1805);
+    assert_eq!(day1b, 1805);
     println!("day1b: {}", day1b);
 }

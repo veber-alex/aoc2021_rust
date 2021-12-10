@@ -23,10 +23,10 @@ fn main() {
     let mut arr = parse_input(input);
 
     let day6a = day6(&mut arr, 0..80);
-    debug_assert_eq!(day6a, 359344);
+    assert_eq!(day6a, 359344);
     println!("day6a: {}", day6a);
 
     let day6b = day6(&mut arr, 80..256);
-    debug_assert_eq!(day6b, 1629570219571);
+    assert_eq!(day6b, 1629570219571);
     println!("day6b: {}", day6b);
 }

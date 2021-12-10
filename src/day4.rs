@@ -81,9 +81,9 @@ fn main() {
     let (mut boards, numbers) = parse_input(input);
     let (day4a, day4b) = play_game(&mut boards, &numbers);
 
-    debug_assert_eq!(day4a, 29440);
+    assert_eq!(day4a, 29440);
     println!("First winner score: {}", day4a);
 
-    debug_assert_eq!(day4b, 13884);
+    assert_eq!(day4b, 13884);
     println!("Last winner score: {}", day4b);
 }

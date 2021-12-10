@@ -81,10 +81,10 @@ fn main() {
     let data = data.as_slice().try_into().unwrap();
 
     let day9a = day9a(data);
-    debug_assert_eq!(day9a, 545);
+    assert_eq!(day9a, 545);
     println!("day9a: {}", day9a);
 
     let day9b = day9b(data);
-    debug_assert_eq!(day9b, 950600);
+    assert_eq!(day9b, 950600);
     println!("day9a: {}", day9b);
 }

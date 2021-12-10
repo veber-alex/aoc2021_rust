@@ -46,10 +46,10 @@ fn main() {
     let input = include_str!("../inputs/day5.txt");
 
     let day5a = parse_and_run(input, day5a);
-    debug_assert_eq!(day5a, 5608);
+    assert_eq!(day5a, 5608);
     println!("day5a: {}", day5a);
 
     let day5b = parse_and_run(input, day5b);
-    debug_assert_eq!(day5b, 20299);
+    assert_eq!(day5b, 20299);
     println!("day5b: {}", day5b);
 }

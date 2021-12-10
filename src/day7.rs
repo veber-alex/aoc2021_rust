@@ -35,10 +35,10 @@ fn main() {
     let data = parse_input(input);
 
     let day7a = day7a(&data);
-    debug_assert_eq!(day7a, 343441);
+    assert_eq!(day7a, 343441);
     println!("day7a: {}", day7a);
 
     let day7b = day7b(&data);
-    debug_assert_eq!(day7b, 98925151);
+    assert_eq!(day7b, 98925151);
     println!("day7b: {}", day7b);
 }

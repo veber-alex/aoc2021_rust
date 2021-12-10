@@ -61,10 +61,10 @@ fn main() {
     let commands = parse_input(input);
 
     let day1a = day1a(&commands);
-    debug_assert_eq!(day1a, 1728414);
+    assert_eq!(day1a, 1728414);
     println!("day1a: {}", day1a);
 
     let day1b = day1b(&commands);
-    debug_assert_eq!(day1b, 1765720035);
+    assert_eq!(day1b, 1765720035);
     println!("day1b: {}", day1b);
 }
