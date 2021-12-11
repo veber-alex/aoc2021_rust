@@ -21,25 +21,18 @@ fn day11(data: &mut [[u8; WIDTH]; HEIGHT]) -> (usize, usize) {
     let mut flashed = vec![];
 
     loop {
-        all_flashed.clear();
-        flashed.clear();
+        data.iter_mut().flatten().for_each(|d| *d += 1);
 
-        (0..HEIGHT)
-            .flat_map(|y| iter::repeat(y).zip(0..WIDTH))
-            .for_each(|(y, x)| data[y][x] += 1);
+        loop {
+            flashed.extend(
+                (0..HEIGHT)
+                    .flat_map(|y| iter::repeat(y).zip(0..WIDTH))
+                    .filter(|&(y, x)| data[y][x] > 9 && !all_flashed.contains(&(y, x))),
+            );
 
-        let mut done = false;
-        while !done {
-            done = true;
-
-            (0..HEIGHT)
-                .flat_map(|y| iter::repeat(y).zip(0..WIDTH))
-                .for_each(|(y, x)| {
-                    if data[y][x] > 9 && !all_flashed.contains(&(y, x)) {
-                        flashed.push((y, x));
-                        done = false;
-                    }
-                });
+            if flashed.is_empty() {
+                break;
+            }
 
             flashed.iter().for_each(|&(y, x)| {
                 let up = y != 0;
@@ -84,6 +77,7 @@ fn day11(data: &mut [[u8; WIDTH]; HEIGHT]) -> (usize, usize) {
         if all_flashed.len() == WIDTH * HEIGHT {
             return (count_at_100, step);
         }
+        all_flashed.clear();
         step += 1;
     }
 }
