@@ -19,19 +19,10 @@ fn get_low_points(data: &[[u32; WIDTH]; LINES]) -> impl Iterator<Item = (usize, 
         .flat_map(|y| iter::repeat(y).zip(0..WIDTH))
         .filter_map(|(y, x)| {
             let current = data[y][x];
-            ((x != 0)
-                .then(|| (current < data[y][x - 1]) as usize)
-                .unwrap_or(1)
-                + (x != WIDTH - 1)
-                    .then(|| (current < data[y][x + 1]) as usize)
-                    .unwrap_or(1)
-                + (y != 0)
-                    .then(|| (current < data[y - 1][x]) as usize)
-                    .unwrap_or(1)
-                + (y != LINES - 1)
-                    .then(|| (current < data[y + 1][x]) as usize)
-                    .unwrap_or(1)
-                == 4)
+            ((x == 0 || current < data[y][x - 1])
+                && (x == WIDTH - 1 || current < data[y][x + 1])
+                && (y == 0 || current < data[y - 1][x])
+                && (y == LINES - 1 || current < data[y + 1][x]))
                 .then(|| (y, x))
         })
 }
@@ -47,17 +38,20 @@ fn walk_point(
     found: &mut HashSet<(usize, usize)>,
 ) {
     let current = data[y][x];
-    (x != 0)
-        .then(|| (y, x - 1))
-        .into_iter()
-        .chain((x != WIDTH - 1).then(|| (y, x + 1)))
-        .chain((y != 0).then(|| (y - 1, x)))
-        .chain((y != LINES - 1).then(|| (y + 1, x)))
-        .filter(|&(y, x)| data[y][x] != 9 && data[y][x] > current)
-        .for_each(|(y, x)| {
-            found.insert((y, x));
-            walk_point(data, y, x, found)
-        });
+
+    [
+        (x != 0).then(|| (y, x - 1)),
+        (x != WIDTH - 1).then(|| (y, x + 1)),
+        (y != 0).then(|| (y - 1, x)),
+        (y != LINES - 1).then(|| (y + 1, x)),
+    ]
+    .into_iter()
+    .flatten()
+    .filter(|&(y, x)| data[y][x] != 9 && data[y][x] > current)
+    .for_each(|(y, x)| {
+        found.insert((y, x));
+        walk_point(data, y, x, found)
+    });
 }
 
 fn day9b(data: &[[u32; WIDTH]; LINES]) -> usize {
