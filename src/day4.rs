@@ -18,19 +18,14 @@ impl Board {
     }
 
     fn check_winner(&mut self, pos: usize) {
-        // row
-        if self
+        self.won = self
             .grid
             .chunks_exact(5)
             .nth(pos / 5)
             .unwrap()
             .iter()
             .all(|n| *n < 0)
-            // column
-            || self.grid.iter().skip(pos % 5).step_by(5).all(|n| *n < 0)
-        {
-            self.won = true;
-        }
+            || self.grid.iter().skip(pos % 5).step_by(5).all(|n| *n < 0);
     }
 
     fn sum_unmarked(&self) -> i32 {
