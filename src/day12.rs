@@ -1,28 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
-#[derive(PartialEq, Eq, Clone, Copy, Hash)]
-struct Cave {
-    name: &'static str,
-    small: bool,
-}
-
-impl Cave {
-    fn new(name: &'static str) -> Self {
-        Self {
-            name,
-            small: name.chars().all(|c| c.is_lowercase()),
-        }
-    }
-}
-
-fn parse_input(input: &'static str) -> HashMap<Cave, Vec<Cave>> {
+fn parse_input(input: &str) -> HashMap<&str, Vec<&str>> {
     let mut map: HashMap<_, Vec<_>> = HashMap::new();
     input
         .lines()
-        .map(|line| {
-            let (a, b) = line.split_once('-').unwrap();
-            (Cave::new(a), Cave::new(b))
-        })
+        .map(|line| line.split_once('-').unwrap())
         .for_each(|(a, b)| {
             map.entry(a).or_default().push(b);
             map.entry(b).or_default().push(a);
@@ -31,11 +13,12 @@ fn parse_input(input: &'static str) -> HashMap<Cave, Vec<Cave>> {
     map
 }
 
-fn walk12a(data: &HashMap<Cave, Vec<Cave>>, visited: &mut Vec<Cave>) -> usize {
+fn walk12a<'a>(data: &HashMap<&'a str, Vec<&'a str>>, visited: &mut Vec<&'a str>) -> u32 {
     data[visited.last().unwrap()].iter().fold(0, |acc, &c| {
-        acc + if c.small && visited.contains(&c) {
+        let small = c.bytes().any(|b| b.is_ascii_lowercase());
+        acc + if small && visited.contains(&c) {
             0
-        } else if c.name == "end" {
+        } else if c == "end" {
             1
         } else {
             visited.push(c);
@@ -46,48 +29,59 @@ fn walk12a(data: &HashMap<Cave, Vec<Cave>>, visited: &mut Vec<Cave>) -> usize {
     })
 }
 
-fn day12a(data: &HashMap<Cave, Vec<Cave>>) -> usize {
-    let mut visited = vec![Cave::new("start")];
+fn day12a(data: &HashMap<&str, Vec<&str>>) -> u32 {
+    let mut visited = vec!["start"];
     walk12a(data, &mut visited)
 }
 
-fn walk12b(
-    data: &HashMap<Cave, Vec<Cave>>,
-    visited: &mut Vec<Cave>,
-    set: &mut HashSet<Vec<Cave>>,
-    twice: Option<Cave>,
-) {
-    data[visited.last().unwrap()].iter().for_each(|&c| {
-        if c.small {
-            if twice == Some(c) {
-                if visited.iter().filter(|&&cc| cc == c).count() > 1 {
-                    return;
+fn walk12b<'a>(
+    data: &HashMap<&'a str, Vec<&'a str>>,
+    visited: &mut Vec<&'a str>,
+    mut twice: Option<(&str, u8)>,
+) -> u32 {
+    data[visited.last().unwrap()].iter().fold(0, |acc, &c| {
+        if c == "end" {
+            return acc
+                + match twice {
+                    Some((_, 2)) | None => 1,
+                    _ => 0,
+                };
+        };
+
+        let small = c.bytes().any(|b| b.is_ascii_lowercase());
+
+        if small {
+            match twice {
+                Some((cc, 2)) if cc == c => return acc,
+                Some((cc, count)) if cc == c => twice = Some((cc, count + 1)),
+                _ => {
+                    if visited.contains(&c) {
+                        return acc;
+                    }
                 }
-            } else if visited.contains(&c) {
-                return;
             }
         }
 
-        if c.name == "end" {
-            set.insert(visited.clone());
-        } else {
-            if c.small && twice.is_none() {
-                visited.push(c);
-                walk12b(data, visited, set, Some(c));
-                visited.pop();
-            };
-            visited.push(c);
-            walk12b(data, visited, set, twice);
-            visited.pop();
+        let mut tw = 0;
+        visited.push(c);
+        if small && twice.is_none() {
+            tw = walk12b(data, visited, Some((c, 1)));
+        };
+        let n = walk12b(data, visited, twice);
+        visited.pop();
+        if let Some((cc, count)) = twice {
+            if c == cc {
+                twice = Some((cc, count - 1))
+            }
         }
+
+        acc + n + tw
     })
 }
 
-fn day12b(data: &HashMap<Cave, Vec<Cave>>) -> usize {
-    let mut set = HashSet::new();
-    let mut visited = vec![Cave::new("start")];
-    walk12b(data, &mut visited, &mut set, None);
-    set.len()
+fn day12b(data: &HashMap<&str, Vec<&str>>) -> u32 {
+    let mut visited = vec!["start"];
+    walk12b(data, &mut visited, None)
 }
 
 fn main() {
