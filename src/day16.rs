@@ -25,15 +25,15 @@ impl<'a> Parser<'a> {
     }
 
     fn take(&mut self, n: usize) -> &'a [u8] {
-        let bytes = &self.bytes[..n];
-        self.bytes = &self.bytes[n..];
-        bytes
+        let (before, after) = self.bytes.split_at(n);
+        self.bytes = after;
+        before
     }
 
     fn one(&mut self) -> u8 {
-        let byte = self.bytes[0];
-        self.bytes = &self.bytes[1..];
-        byte
+        let (&first, rest) = self.bytes.split_first().unwrap();
+        self.bytes = rest;
+        first
     }
 
     fn parse_packet(&mut self) {
@@ -96,10 +96,10 @@ impl<'a> Parser<'a> {
                 Literal(v) => stack.push(v),
                 Instruction { kind, count } => {
                     let n = match kind {
-                        0 => (0..count).map(|_| stack.pop().unwrap()).sum(),
-                        1 => (0..count).map(|_| stack.pop().unwrap()).product(),
-                        2 => (0..count).map(|_| stack.pop().unwrap()).min().unwrap(),
-                        3 => (0..count).map(|_| stack.pop().unwrap()).max().unwrap(),
+                        0 => stack.drain(stack.len() - count as usize..).sum(),
+                        1 => stack.drain(stack.len() - count as usize..).product(),
+                        2 => stack.drain(stack.len() - count as usize..).min().unwrap(),
+                        3 => stack.drain(stack.len() - count as usize..).max().unwrap(),
                         5 => (stack.pop().unwrap() < stack.pop().unwrap()) as _,
                         6 => (stack.pop().unwrap() > stack.pop().unwrap()) as _,
                         7 => (stack.pop().unwrap() == stack.pop().unwrap()) as _,
